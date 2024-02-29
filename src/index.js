@@ -1,10 +1,12 @@
 // index.js
-
+const url = `http://localhost:3000`
+let currentRamen;
 // Callbacks
 const handleClick = (ramen) => {
-  const detailImg = document.querySelector("#ramen-detail > .detail-image");
-  const detailName = document.querySelector("#ramen-detail > .name");
-  const detailRestaurant = document.querySelector("#ramen-detail > .restaurant");
+  const ramenDetail = document.querySelector("#ramen-detail");
+  const detailImg = ramenDetail.querySelector(".detail-image");
+  const detailName = ramenDetail.querySelector(".name");
+  const detailRestaurant = ramenDetail.querySelector(".restaurant");
   const detailsRating = document.getElementById("rating-display");
   const detailsComment = document.getElementById("comment-display");
 
@@ -14,6 +16,7 @@ const handleClick = (ramen) => {
   detailRestaurant.innerText = ramen.restaurant;
   detailsRating.innerText = ramen.rating.toString();
   detailsComment.innerText = ramen.comment;
+  currentRamen = ramen;
 };
 
 const displayRamen = (object) => {
@@ -24,6 +27,29 @@ const displayRamen = (object) => {
   ramenImg.classList.add("image-slider");
   ramenImg.addEventListener("click", (event) => handleClick(object, event));
   ramenMenuDiv.appendChild(ramenImg);
+};
+
+const handleEditSubmit = (event) => {
+  event.preventDefault();
+  
+  // Assuming there is a variable to store the currently selected ramen
+  // and it's named currentRamen
+  const updatedRating = event.target['update-rating'].value;
+  const updatedComment = event.target['update-comment'].value;
+
+  // Update the current ramen object
+  currentRamen.rating = updatedRating;
+  currentRamen.comment = updatedComment;
+
+  // Update the display of the currently selected ramen
+  const detailsRating = document.getElementById("rating-display");
+  const detailsComment = document.getElementById("comment-display");
+
+  detailsRating.innerText = updatedRating.toString();
+  detailsComment.innerText = updatedComment;
+
+  // Reset the form
+  event.target.reset();
 };
 
 const handleSubmit = (event) => {
@@ -45,8 +71,15 @@ const addSubmitListener = () => {
   }
 }
 
+const addEditSubmitListener = () => {
+  const editRamenForm = document.querySelector("#edit-ramen");
+  if (editRamenForm) {
+    editRamenForm.addEventListener("submit", handleEditSubmit);
+  }
+};
+
 const displayRamens = () => {
-  fetch("http://localhost:3000/ramens")
+  fetch(`${url}/ramens`)
     .then((response) => response.json())
     .then((ramens) => {
       document.getElementById("ramen-menu").innerHTML = "";
@@ -60,9 +93,13 @@ const displayRamens = () => {
 };
 
 const main = () => {
+  
   addSubmitListener();
   displayRamens();
-}
+  addEditSubmitListener();
+  
+
+};
 
 main()
 
@@ -73,5 +110,6 @@ export {
   addSubmitListener,
   handleSubmit,
   handleClick,
+  handleEditSubmit,
   main,
 };
