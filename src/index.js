@@ -19,14 +19,56 @@ const handleClick = (ramen) => {
   currentRamen = ramen;
 };
 
+
+const handleDelete = () => {
+  const ramenMenuDiv = document.getElementById("ramen-menu");
+
+  if (currentRamen) {
+    // Remove the currently displayed ramen from the menu
+    const ramenImg = ramenMenuDiv.querySelector(`[alt="${currentRamen.name}"]`);
+    if (ramenImg) {
+      ramenImg.remove();
+    }
+
+    // Clear the ramen-detail div
+    const ramenDetail = document.querySelector("#ramen-detail");
+    const detailImg = ramenDetail.querySelector(".detail-image");
+    const detailName = ramenDetail.querySelector(".name");
+    const detailRestaurant = ramenDetail.querySelector(".restaurant");
+    const detailsRating = document.getElementById("rating-display");
+    const detailsComment = document.getElementById("comment-display");
+
+    detailImg.src = "";
+    detailImg.alt = "";
+    detailName.innerText = "";
+    detailRestaurant.innerText = "";
+    detailsRating.innerText = "";
+    detailsComment.innerText = "";
+
+    currentRamen = null;
+  }
+};
+
 const displayRamen = (object) => {
   const ramenMenuDiv = document.getElementById("ramen-menu");
   const ramenImg = document.createElement("img");
+
   ramenImg.src = object.image;
   ramenImg.alt = object.name;
   ramenImg.classList.add("image-slider");
   ramenImg.addEventListener("click", (event) => handleClick(object, event));
   ramenMenuDiv.appendChild(ramenImg);
+
+  // Create a single "delete" button at the bottom of the page
+  const deleteButton = document.getElementById("delete-button");
+  if (!deleteButton) {
+    const deleteRamenButton = document.createElement('button');
+    deleteRamenButton.textContent = 'Delete Currently Displayed Ramen';
+    deleteRamenButton.addEventListener('click', handleDelete);
+    deleteRamenButton.id = "delete-button";
+    document.body.appendChild(deleteRamenButton);
+  }
+
 };
 
 const handleEditSubmit = (event) => {
